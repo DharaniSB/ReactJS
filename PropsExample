@@ -1,0 +1,26 @@
+
+export default function PropsExample({ title, tutor }) {
+  return (
+    <>
+      <h1>Props Example</h1>
+      <p>{title}</p>
+      <p>{tutor}</p>
+    </>
+  );
+}
+
+
+App.jsx
+import PropsExample from "./form/PropsExample";
+
+function App() {
+  return (
+    <>
+      <PropsExample
+        title="React Props Concept"
+        tutor="Pavithra Mam"
+      />
+    </>
+  );
+}
+export default App;
