@@ -1,0 +1,118 @@
+// Import required modules
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+
+// Create the Express app
+const app = express();
+
+// Create HTTP server
+const server = http.createServer(app);
+
+// Create Socket.IO instance attached to the server
+const io = socketIo(server);
+
+// Serve a simple route
+app.get('/', (req, res) => {
+  res.send('Polling server is running');
+});
+
+// Handle socket connections
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Listen for polling answers from clients
+  socket.on('submitAnswer', (data) => {
+    console.log('Answer received:', data);
+    // Emit the answer to all connected clients
+    io.emit('newAnswer', data);
+  });
+
+  // Handle user disconnect
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+// Set the server to listen on port 4000
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+
+App.jsx
+
+import { useState, useEffect } from "react";
+import { io } from "socket.io-client";
+
+// Connect to backend
+const socket = io("http://localhost:4000");
+
+function App() {
+  const [question, setQuestion] = useState("");
+  const [options, setOptions] = useState([]);
+  const [selected, setSelected] = useState("");
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    socket.on("newAnswer", (data) => {
+      setResults((prev) => [...prev, data]);
+    });
+
+    return () => socket.off("newAnswer");
+  }, []);
+
+  const startPoll = () => {
+    const q = prompt("Enter question");
+    const opts = prompt("Enter options (comma separated)").split(",");
+
+    setQuestion(q);
+    setOptions(opts);
+    setResults([]);
+  };
+
+  const submitVote = () => {
+    if (!selected) return;
+    socket.emit("submitAnswer", { answer: selected });
+    setSelected("");
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Classroom Polling</h2>
+
+      <button onClick={startPoll}>Start Poll</button>
+
+      {question && (
+        <>
+          <h3>{question}</h3>
+
+          {options.map((opt, i) => (
+            <div key={i}>
+              <input
+                type="radio"
+                name="poll"
+                value={opt}
+                onChange={(e) => setSelected(e.target.value)}
+              />
+              {opt}
+            </div>
+          ))}
+
+          <button onClick={submitVote}>Submit</button>
+
+          <h4>Live Responses</h4>
+          <ul>
+            {results.map((r, i) => (
+              <li key={i}>{r.answer}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
