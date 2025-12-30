@@ -1,0 +1,4 @@
+ProductBrowse.jsx (Product browsing page)
+export default function ProductBrowse() {
+  return <h1>Browse Products by Category</h1>;
+}
