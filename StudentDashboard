@@ -1,0 +1,4 @@
+StudentDashboard.jsx
+export default function StudentDashboard() {
+  return <h1>Student Management Dashboard</h1>;
+}
