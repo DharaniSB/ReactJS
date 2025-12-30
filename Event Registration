@@ -1,0 +1,11 @@
+EventRegistration.jsx
+export default function EventRegistration() {
+  const register = () => alert("Event Registered Successfully!");
+
+  return (
+    <>
+      <h1>Event Registration</h1>
+      <button onClick={register}>Register</button>
+    </>
+  );
+}
