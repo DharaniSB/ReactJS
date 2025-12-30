@@ -1,0 +1,17 @@
+Blog.jsx (blog with comments)
+import { useState } from "react";
+
+export default function Blog() {
+  const [comment, setComment] = useState("");
+
+  return (
+    <>
+      <h1>Blog</h1>
+      <input
+        placeholder="Write comment"
+        onChange={(e) => setComment(e.target.value)}
+      />
+      <p>Latest Comment: {comment}</p>
+    </>
+  );
+}
